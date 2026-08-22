@@ -1,7 +1,10 @@
 name = "madina-plus"
 compatibility_date = "2025-08-01"
 
-# Static Vite SPA on Cloudflare Workers/Pages assets
+# Run Vite build before upload (Cloudflare Build command is None)
+[build]
+command = "npm run build"
+
 [assets]
 directory = "./dist"
 not_found_handling = "single-page-application"

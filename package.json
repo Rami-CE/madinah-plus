@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend ci && npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist dist",
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
     "preview": "npm --prefix frontend run preview",
     "deploy": "npm run build && wrangler deploy"
   },
