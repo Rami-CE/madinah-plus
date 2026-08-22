@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend ci && npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
-    "build:cf": "npm --prefix frontend ci && VITE_API_URL=https://finish-grown-characters-concept.trycloudflare.com npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
+    "build:cf": "npm --prefix frontend ci && VITE_API_URL=https://api-production-8d38.up.railway.app npm --prefix frontend run build && rm -rf dist && cp -r frontend/dist ./dist",
     "preview": "npm --prefix frontend run preview",
     "deploy": "npm run build:cf && wrangler deploy"
   },

@@ -1,57 +1,81 @@
 # Madinah+ / مدينة+
 
-Vite + React web client and ASP.NET Core API for the student-friendly city certification prototype.
+Vite + React web client and ASP.NET Core API for a student-friendly city certification prototype.
 
 Demo data is fictional.
+
+## Live (always on — PC can be off)
+
+| Piece | URL |
+| --- | --- |
+| Frontend | https://madina-plus.ramighassan-d.workers.dev |
+| API | https://api-production-8d38.up.railway.app |
+| API health | https://api-production-8d38.up.railway.app/health |
+| API Swagger | https://api-production-8d38.up.railway.app/swagger |
+
+Hosted on **Cloudflare Workers** (frontend) + **Railway** (API + Postgres). No local tunnel required.
 
 ## Layout
 
 ```
 backend/
   MadinahPlus.sln
-  src/MadinahPlus.Api          API layer (controllers, CORS, Swagger)
-  src/MadinahPlus.Domain       Domain layer (entities, rules, services)
-  src/MadinahPlus.DataAccess   Data access (EF Core, PostgreSQL, seed)
-frontend/                      Vite + React web app
-docker-compose.yml             PostgreSQL 16
+  Dockerfile                   Railway / container image
+  railway.toml
+  src/MadinahPlus.Api          API (controllers, CORS, Swagger)
+  src/MadinahPlus.Domain       Domain (entities, rules, services)
+  src/MadinahPlus.DataAccess   EF Core, PostgreSQL, seed
+frontend/                      Vite + React + Tailwind
+deploy/                        Legacy local-tunnel notes (optional)
+docker-compose.yml             Local PostgreSQL 16 only
+wrangler.toml                  Cloudflare Workers (static SPA)
+package.json                   Root scripts: build, deploy
 ```
 
-## Backend
+## Production deploy
 
-Requires .NET 8 SDK and PostgreSQL.
+### Frontend (Cloudflare Workers)
+
+Requires Node.js 22+ for Wrangler.
+
+```bash
+npm run deploy
+```
+
+`build:cf` bakes `VITE_API_URL=https://api-production-8d38.up.railway.app` into the SPA.
+
+### Backend (Railway)
+
+Project: [madinah-plus on Railway](https://railway.com/project/9e3e89dd-2a46-4c24-a01d-28d8782c651d)
+
+```bash
+cd backend
+railway up -y -c --service api
+```
+
+Postgres is the Railway `Postgres` service. API reads `DATABASE_URL`.
+
+## Local development (optional)
+
+Requires .NET 8 SDK, Node.js 18+, and PostgreSQL.
 
 ```bash
 docker compose up -d
-cd backend
-dotnet run --project src/MadinahPlus.Api
-```
-
-API: `http://localhost:5088`  
-Swagger: `http://localhost:5088/swagger`
-
-Schema is created with `EnsureCreated` and seeded on first run. No EF migrations.
-
-Connection string: `backend/src/MadinahPlus.Api/appsettings.json`
-
-## Frontend
-
-Requires Node.js 18+.
-
-```bash
-cd frontend
-npm install
+cd backend && dotnet run --project src/MadinahPlus.Api
+# other terminal:
 npm run dev
 ```
 
-Site: `http://localhost:5173`  
-Vite proxies `/api` to `http://localhost:5088`.
+- API: `http://localhost:5088`
+- Site: `http://localhost:5173` (Vite proxies `/api` → `5088`)
+- Override API: `VITE_API_URL=http://HOST:5088 npm run dev`
 
-Override API URL: `VITE_API_URL=http://HOST:5088 npm run dev`
+### Demo login
 
-Demo login:
-
-- Student: `student@demo.com` / `Demo123!`
-- Municipality: `municipality@demo.com` / `Demo123!`
+| Role | Email | Password |
+| --- | --- | --- |
+| Student | `student@demo.com` | `Demo123!` |
+| Municipality | `municipality@demo.com` | `Demo123!` |
 
 ## API
 
@@ -75,5 +99,5 @@ Demo login:
 
 ## Portals
 
-Student: city score, certified housing, businesses, safe routes, feedback.  
-Municipality: dashboard, housing inspections, certification seal, dimensions, monitoring.
+- **Student:** city score, certified housing, businesses, safe routes, feedback
+- **Municipality:** dashboard, housing inspections, certification seal, dimensions, monitoring

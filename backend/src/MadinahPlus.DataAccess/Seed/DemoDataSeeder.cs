@@ -9,10 +9,13 @@ namespace MadinahPlus.DataAccess.Seed;
 
 public static class DemoDataSeeder
 {
+    /// <summary>Bump to force clear + reseed on next API boot (no migrations).</summary>
+    private const string SeedRevision = "seed-v2-birzeit-ramallah";
+
     public static async Task SeedAsync(AppDbContext db)
     {
         var existing = await db.CityProfiles.AsNoTracking().FirstOrDefaultAsync();
-        if (existing?.Name.Ar == "بيرزيت")
+        if (existing?.Tagline.En.Contains(SeedRevision, StringComparison.Ordinal) == true)
         {
             await EnsureAccessibilityCategoryAsync(db);
             await EnsureDemoUsersAsync(db);
@@ -20,21 +23,22 @@ public static class DemoDataSeeder
         }
         if (existing is not null) await ClearExistingAsync(db);
 
+        // Fictional prototype data around Birzeit (Ramallah & al-Bireh governorate).
         db.CityProfiles.Add(new CityProfile
         {
             Name = T("بيرزيت", "Birzeit"),
             Tagline = T(
-                "نموذج أولي لشهادة المدينة الصديقة للطلاب: يقيس السكن والاقتصاد الطلابي والسلامة والتنقل والمجتمع حول بيرزيت.",
-                "A prototype for student-friendly city certification: it measures housing, student economy, safety, mobility and community around Birzeit."),
-            OverallScore = 78,
+                "بيانات تجريبية خيالية لمنطقة بيرزيت (محافظة رام الله والبيرة): سكن، اقتصاد طلابي، سلامة، تنقل ومجتمع.",
+                $"Fictional prototype data for the Birzeit area (Ramallah & al-Bireh region): housing, student economy, safety, mobility and community. [{SeedRevision}]"),
+            OverallScore = 79,
             MapCenterLat = 31.9733,
             MapCenterLng = 35.1964,
             Dimensions = new List<CityDimension>
             {
-                Dim("housing", "السكن", "Housing", 82, 3, 6, "وحدات في أبو قش بحاجة لتحسين التهوية", "Units in Abu Qash need ventilation upgrades", TrendDirection.Up, "62,68,73,78,82"),
-                Dim("economy", "الاقتصاد الطلابي", "Student Economy", 75, 3, 7, "محال في البلدة لا تستوفي معايير الصداقة للطلاب", "Town businesses still miss student-friendly standards", TrendDirection.Up, "52,58,64,70,75"),
-                Dim("safety", "السلامة والتنقل", "Safety & Mobility", 71, 2, 3, "إضاءة غير كافية على المسار ب بين السكن والجامعة", "Insufficient lighting on Route B between housing and campus", TrendDirection.Flat, "60,63,66,68,71"),
-                Dim("community", "المجتمع", "Community", 84, 7, 9, "مشاركة طلابية محدودة في أنشطة البلدية الثقافية", "Limited student participation in municipal cultural activities", TrendDirection.Up, "70,74,78,81,84")
+                Dim("housing", "السكن", "Housing", 80, 4, 9, "وحدات في أبو قش وبيتين بحاجة لتحسين التهوية والسلامة", "Units in Abu Qash and Beitin need ventilation and safety upgrades", TrendDirection.Up, "62,68,73,76,80"),
+                Dim("economy", "الاقتصاد الطلابي", "Student Economy", 76, 5, 11, "محال على طريق رام الله–بيرزيت لا تستوفي معايير الصداقة للطلاب", "Shops on the Ramallah–Birzeit road still miss student-friendly standards", TrendDirection.Up, "52,58,64,70,76"),
+                Dim("safety", "السلامة والتنقل", "Safety & Mobility", 72, 3, 5, "إضاءة غير كافية على المسار ب ومسار سردا مساءً", "Insufficient lighting on Route B and the Surda path after dark", TrendDirection.Flat, "60,63,66,69,72"),
+                Dim("community", "المجتمع", "Community", 85, 8, 10, "مشاركة طلابية محدودة في أنشطة بلدية بيرزيت والقرى المجاورة", "Limited student participation in Birzeit and nearby village activities", TrendDirection.Up, "70,74,78,82,85")
             }
         });
 
@@ -42,36 +46,36 @@ public static class DemoDataSeeder
             new ImprovementPriority
             {
                 Id = "p1", Rank = 1, Severity = PrioritySeverity.High, Dimension = "housing",
-                Text = T("وحدتان سكنيتان في أبو قش بحاجة لتحسين التهوية", "Two housing units in Abu Qash need ventilation improvements"),
-                Impact = T("يؤثر على طلبة يسكنون بين أبو قش والحرم الجامعي — بيانات تجريبية", "Affects students living between Abu Qash and campus — prototype data"),
+                Text = T("وحدتان سكنيتان في أبو قش وبيتين بحاجة لتحسين التهوية", "Two housing units in Abu Qash and Beitin need ventilation improvements"),
+                Impact = T("يؤثر على طلبة يسكنون بين أبو قش / بيتين والحرم — بيانات خيالية", "Affects students living between Abu Qash / Beitin and campus — fictional data"),
                 Action = T("جدولة تفتيش بلدي خلال 14 يومًا وإصدار مهلة تصليح 30 يومًا", "Schedule municipal inspection within 14 days and issue a 30-day repair deadline")
             },
             new ImprovementPriority
             {
                 Id = "p2", Rank = 2, Severity = PrioritySeverity.Medium, Dimension = "safety",
-                Text = T("المسار ب يعاني من إضاءة غير كافية بعد الغروب", "Route B has insufficient lighting after sunset"),
-                Impact = T("أكثر ممرات المشاة استخدامًا بين السكن والجامعة", "The most-used pedestrian path between housing and the university"),
-                Action = T("تركيب أعمدة إنارة LED على المسار ب", "Install LED lighting poles along Route B")
+                Text = T("المسار ب ومسار سردا يعانيان من إضاءة غير كافية بعد الغروب", "Route B and the Surda path have insufficient lighting after sunset"),
+                Impact = T("أكثر ممرات المشاة استخدامًا بين السكن والجامعة في محيط بيرزيت", "The most-used pedestrian paths between housing and campus around Birzeit"),
+                Action = T("تركيب أعمدة إنارة LED على المسار ب ومسار سردا", "Install LED lighting poles along Route B and the Surda path")
             },
             new ImprovementPriority
             {
                 Id = "p3", Rank = 3, Severity = PrioritySeverity.Medium, Dimension = "economy",
-                Text = T("3 من 7 محال تفتيش لا تستوفي معايير الصداقة للطلاب", "Only 43% of inspected local businesses meet student-friendly criteria"),
-                Impact = T("فرصة لاعتماد محال إضافية ضمن برنامج المدينة الصديقة للطلاب", "Chance to certify more shops under the student-friendly city program"),
-                Action = T("إطلاق حملة اعتماد للمحال حول الحرم والبلدة", "Launch a certification campaign around campus and the old town")
+                Text = T("6 من 11 محلًا مفتيشًا لا تستوفي معايير الصداقة للطلاب", "Only 45% of inspected local businesses meet student-friendly criteria"),
+                Impact = T("فرصة لاعتماد محال إضافية على طريق رام الله–بيرزيت والبلدة", "Chance to certify more shops on the Ramallah–Birzeit road and in town"),
+                Action = T("إطلاق حملة اعتماد للمحال حول الحرم والبلدة والقرى المجاورة", "Launch a certification campaign around campus, town, and nearby villages")
             });
 
         db.MonitoringMetrics.AddRange(
-            new MonitoringMetric { Key = "housing", Before = 64, After = 82, Unit = "score" },
-            new MonitoringMetric { Key = "lighting", Before = 49, After = 71, Unit = "percent" },
-            new MonitoringMetric { Key = "certifiedBusinesses", Before = 2, After = 4, Unit = "count" });
+            new MonitoringMetric { Key = "housing", Before = 64, After = 80, Unit = "score" },
+            new MonitoringMetric { Key = "lighting", Before = 49, After = 72, Unit = "percent" },
+            new MonitoringMetric { Key = "certifiedBusinesses", Before = 2, After = 5, Unit = "count" });
 
         db.HousingUnits.AddRange(
-            House("h1", "سكن جامعة بيرزيت", "Birzeit University Residence", "دائرة الإسكان الطلابي", "Student Housing Department",
+            House("h1", "سكن جامعة بيرزيت", "Birzeit University Residence", "دائرة الإسكان الطلابي (تجريبي)", "Student Housing Dept (fictional)",
                 "2026-08-12", "2026-08-12", "2027-08-12", 31.9598, 35.1835, "1,200 ₪/شهر", "1,200 ₪/mo", "0.3 كم", "0.3 km",
                 Fac(("واي فاي", "WiFi"), ("مطبخ", "Kitchen"), ("غسالة", "Laundry"), ("حراسة", "Security"), ("إمكانية وصول لذوي الإعاقة", "Disability access")),
                 Overrides(("elevator", InspectionItemStatus.Pass))),
-            House("h2", "سكن أبو قش", "Abu Qash Residence", "جمعية الإسكان الطلابي - بيرزيت", "Birzeit Student Housing Association",
+            House("h2", "سكن أبو قش", "Abu Qash Residence", "جمعية الإسكان الطلابي - بيرزيت (تجريبي)", "Birzeit Student Housing Association (fictional)",
                 "2026-08-10", null, null, 31.9512, 35.1888, "850 ₪/شهر", "850 ₪/mo", "1.1 كم", "1.1 km",
                 Fac(("واي فاي", "WiFi"), ("تدفئة", "Heating")),
                 Overrides(("ventilation", InspectionItemStatus.Needs), ("light", InspectionItemStatus.Needs), ("heating", InspectionItemStatus.Needs),
@@ -81,7 +85,7 @@ public static class DemoDataSeeder
                     ("elevator", InspectionItemStatus.NotApplicable), ("bathroom", InspectionItemStatus.Needs),
                     ("doors", InspectionItemStatus.Pass), ("common", InspectionItemStatus.Needs),
                     ("circulation", InspectionItemStatus.Needs))),
-            House("h3", "سكن جفنا", "Jifna Residence", "إسكان عائلي - جفنا", "Jifna Family Housing",
+            House("h3", "سكن جفنا", "Jifna Residence", "إسكان عائلي - جفنا (تجريبي)", "Jifna Family Housing (fictional)",
                 "2026-08-08", null, null, 31.9965, 35.1992, "750 ₪/شهر", "750 ₪/mo", "3.2 كم", "3.2 km",
                 Fac(("موقف", "Parking")),
                 Overrides(("electrical", InspectionItemStatus.Needs), ("exit", InspectionItemStatus.Fail), ("ventilation", InspectionItemStatus.Fail),
@@ -90,20 +94,37 @@ public static class DemoDataSeeder
                     ("elevator", InspectionItemStatus.NotApplicable), ("bathroom", InspectionItemStatus.Fail),
                     ("doors", InspectionItemStatus.Needs), ("common", InspectionItemStatus.Fail),
                     ("circulation", InspectionItemStatus.Fail))),
-            House("h4", "سكن البلدة القديمة", "Old Town Residence", "عائلة قاسم", "Qasem Family Housing",
+            House("h4", "سكن البلدة القديمة", "Old Town Residence", "عائلة قاسم (تجريبي)", "Qasem Family Housing (fictional)",
                 "2026-08-05", "2026-08-05", "2027-08-05", 31.9736, 35.1968, "1,050 ₪/شهر", "1,050 ₪/mo", "1.8 كم", "1.8 km",
                 Fac(("واي فاي", "WiFi"), ("مطبخ", "Kitchen"), ("إمكانية وصول لذوي الإعاقة", "Disability access")),
                 Overrides(("light", InspectionItemStatus.Needs), ("common", InspectionItemStatus.Needs), ("elevator", InspectionItemStatus.NotApplicable))),
-            House("h5", "سكن سردا", "Surda Residence", "تعاونية الإسكان الطلابي", "Student Housing Cooperative",
+            House("h5", "سكن سردا", "Surda Residence", "تعاونية الإسكان الطلابي (تجريبي)", "Student Housing Cooperative (fictional)",
                 "2026-08-14", null, null, 31.9668, 35.1712, "900 ₪/شهر", "900 ₪/mo", "1.6 كم", "1.6 km",
                 Fac(("واي فاي", "WiFi"), ("غسالة", "Laundry")),
                 Overrides(("internet", InspectionItemStatus.Needs), ("roomsize", InspectionItemStatus.Needs),
                     ("wheelchair", InspectionItemStatus.Needs), ("bathroom", InspectionItemStatus.Needs),
                     ("elevator", InspectionItemStatus.NotApplicable), ("common", InspectionItemStatus.Needs))),
-            House("h6", "سكن عطارة", "Atara Residence", "برنامج السكن الآمن - بيرزيت", "Birzeit Safe Housing Program",
+            House("h6", "سكن عطارة", "Atara Residence", "برنامج السكن الآمن - بيرزيت (تجريبي)", "Birzeit Safe Housing Program (fictional)",
                 "2026-08-11", "2026-08-11", "2027-08-11", 31.9820, 35.1685, "1,100 ₪/شهر", "1,100 ₪/mo", "2.4 كم", "2.4 km",
                 Fac(("واي فاي", "WiFi"), ("مطبخ", "Kitchen"), ("تدفئة", "Heating"), ("إمكانية وصول لذوي الإعاقة", "Disability access")),
-                Overrides(("extinguisher", InspectionItemStatus.Needs), ("elevator", InspectionItemStatus.NotApplicable))));
+                Overrides(("extinguisher", InspectionItemStatus.Needs), ("elevator", InspectionItemStatus.NotApplicable))),
+            House("h7", "سكن بيتين التجريبي", "Beitin Demo Residence", "إسكان طلابي بيتين (خيالي)", "Beitin Student Housing (fictional)",
+                "2026-08-15", null, null, 31.9288, 35.2215, "780 ₪/شهر", "780 ₪/mo", "5.4 كم", "5.4 km",
+                Fac(("واي فاي", "WiFi"), ("موقف", "Parking")),
+                Overrides(("ventilation", InspectionItemStatus.Needs), ("exit", InspectionItemStatus.Needs), ("internet", InspectionItemStatus.Needs),
+                    ("wheelchair", InspectionItemStatus.Fail), ("entrance", InspectionItemStatus.Needs),
+                    ("elevator", InspectionItemStatus.NotApplicable), ("bathroom", InspectionItemStatus.Needs),
+                    ("common", InspectionItemStatus.Needs), ("circulation", InspectionItemStatus.Needs))),
+            House("h8", "شقق بوابة الحرم", "Campus Gate Apartments", "مؤجر خاص - بيرزيت (خيالي)", "Private landlord – Birzeit (fictional)",
+                "2026-08-13", "2026-08-13", "2027-08-13", 31.9612, 35.1855, "1,350 ₪/شهر", "1,350 ₪/mo", "0.5 كم", "0.5 km",
+                Fac(("واي فاي", "WiFi"), ("مطبخ", "Kitchen"), ("غسالة", "Laundry"), ("حراسة", "Security"), ("إمكانية وصول لذوي الإعاقة", "Disability access")),
+                Overrides(("elevator", InspectionItemStatus.Pass))),
+            House("h9", "سكن دورا القرع", "Dura al-Qar Residence", "عائلة منصور (خيالي)", "Mansour Family Housing (fictional)",
+                "2026-08-09", null, null, 31.9545, 35.1548, "820 ₪/شهر", "820 ₪/mo", "3.0 كم", "3.0 km",
+                Fac(("واي فاي", "WiFi"), ("تدفئة", "Heating")),
+                Overrides(("light", InspectionItemStatus.Needs), ("heating", InspectionItemStatus.Needs), ("agreement", InspectionItemStatus.Needs),
+                    ("elevator", InspectionItemStatus.NotApplicable), ("bathroom", InspectionItemStatus.Needs),
+                    ("common", InspectionItemStatus.Needs))));
 
         db.Businesses.AddRange(
             Biz("b1", "كافيه الحرم", "Campus Café", "مقهى", "Café", 31.9588, 35.1818, true, true, true, true, "مساحة دراسة مسائية", "Evening study space"),
@@ -112,7 +133,11 @@ public static class DemoDataSeeder
             Biz("b4", "سوبرماركت أبو قش", "Abu Qash Market", "بقالة", "Grocery", 31.9518, 35.1896, false, true, false, false, "خصم طلابي على السلة الأسبوعية", "Student weekly-basket discount"),
             Biz("b5", "مغسلة سردا", "Surda Laundry", "خدمات", "Services", 31.9672, 35.1724, false, false, false, true, "خصم غسيل للطلبة", "Student laundry discount"),
             Biz("b6", "فرن جفنا", "Jifna Bakery", "مخبز", "Bakery", 31.9958, 35.1984, true, true, true, false, "وجبة طالب مخفّضة", "Discounted student meal"),
-            Biz("b7", "مركز طباعة الحرم", "Campus Print Center", "خدمات طباعة", "Printing services", 31.9592, 35.1826, false, true, false, false, "خصم طلابي على الطباعة", "Student printing discount"));
+            Biz("b7", "مركز طباعة الحرم", "Campus Print Center", "خدمات طباعة", "Printing services", 31.9592, 35.1826, false, true, false, false, "خصم طلابي على الطباعة", "Student printing discount"),
+            Biz("b8", "مقصف طريق رام الله", "Ramallah Road Diner", "مطعم طلابي", "Student diner", 31.9625, 35.1780, true, true, true, true, "وجبة طالب مخفّضة", "Discounted student meal"),
+            Biz("b9", "صيدلية البلدة", "Old Town Pharmacy", "صيدلية", "Pharmacy", 31.9742, 35.1958, false, true, false, true, "خصم طلابي على الوصفات", "Student prescription discount"),
+            Biz("b10", "كiosk بيتين", "Beitin Kiosk", "بقالة", "Grocery", 31.9295, 35.2208, false, false, false, false, "خصم طلابي على السلة الأسبوعية", "Student weekly-basket discount"),
+            Biz("b11", "مقهى جفنا الثقافي", "Jifna Cultural Café", "مقهى", "Café", 31.9970, 35.2001, true, true, true, true, "مساحة دراسة مسائية", "Evening study space"));
 
         db.SafeRoutes.AddRange(
             Route("r-a", "مسار أبو قش–الجامعة", "Abu Qash–University Route", "مسار صديق للطلاب", "Student-friendly route",
@@ -129,7 +154,17 @@ public static class DemoDataSeeder
                 "سكن جفنا", "Jifna housing", "الطريق الشمالي", "Northern road", "جامعة بيرزيت", "Birzeit University",
                 CertificationStatus.Certified,
                 new (double, double)[] { (31.9965, 35.1992), (31.9770, 35.1900), (31.9584, 35.1813) },
-                true, true, true, false));
+                true, true, true, false),
+            Route("r-d", "مسار سردا–الجامعة", "Surda–University Route", "قيد التحسين", "Under improvement",
+                "سكن سردا", "Surda housing", "طريق رام الله–بيرزيت", "Ramallah–Birzeit road", "جامعة بيرزيت", "Birzeit University",
+                CertificationStatus.Conditional,
+                new (double, double)[] { (31.9668, 35.1712), (31.9620, 35.1765), (31.9584, 35.1813) },
+                false, true, true, false),
+            Route("r-e", "مسار عطارة–الجامعة", "Atara–University Route", "مسار صديق للطلاب", "Student-friendly route",
+                "سكن عطارة", "Atara housing", "الطريق الغربي", "Western road", "جامعة بيرزيت", "Birzeit University",
+                CertificationStatus.Certified,
+                new (double, double)[] { (31.9820, 35.1685), (31.9700, 35.1750), (31.9584, 35.1813) },
+                true, true, true, true));
 
         db.FeedbackCategories.AddRange(
             new FeedbackCategory { Key = "housing", Label = T("السكن", "Housing") },
@@ -168,6 +203,18 @@ public static class DemoDataSeeder
                 Id = "f5", CategoryKey = "community", Date = DateOnly.Parse("2026-08-06"),
                 Text = T("أنشطة البلدية الثقافية قليلة الإعلان للطلبة المقيمين حول الحرم.", "Municipal cultural activities are poorly advertised to students living near campus."),
                 LinkedTo = T("المجتمع ← الأنشطة ← بلدية بيرزيت", "Community → Activities → Birzeit Municipality")
+            },
+            new StudentFeedback
+            {
+                Id = "f6", CategoryKey = "mobility", Date = DateOnly.Parse("2026-08-14"),
+                Text = T("الطريق من سردا إلى الجامعة مظلم على مقاطع طريق رام الله–بيرزيت.", "The Surda-to-campus walk is dark on stretches of the Ramallah–Birzeit road."),
+                LinkedTo = T("التنقل ← الإضاءة ← مسار سردا", "Mobility → Lighting → Surda route")
+            },
+            new StudentFeedback
+            {
+                Id = "f7", CategoryKey = "housing", Date = DateOnly.Parse("2026-08-12"),
+                Text = T("سكن بيتين التجريبي بعيد ويحتاج مواصلات أوضح للطلبة.", "The Beitin demo residence is far and needs clearer transit for students."),
+                LinkedTo = T("السكن ← المسافة ← بيتين", "Housing → Distance → Beitin")
             });
 
         await db.SaveChangesAsync();
@@ -223,12 +270,19 @@ public static class DemoDataSeeder
                 ["circulation"] = InspectionItemStatus.Fail
             },
             "h4" => new() { ["common"] = InspectionItemStatus.Needs, ["elevator"] = InspectionItemStatus.NotApplicable },
-            "h5" => new()
+            "h5" or "h9" => new()
             {
                 ["wheelchair"] = InspectionItemStatus.Needs, ["bathroom"] = InspectionItemStatus.Needs,
                 ["elevator"] = InspectionItemStatus.NotApplicable, ["common"] = InspectionItemStatus.Needs
             },
             "h6" => new() { ["elevator"] = InspectionItemStatus.NotApplicable },
+            "h7" => new()
+            {
+                ["wheelchair"] = InspectionItemStatus.Fail, ["entrance"] = InspectionItemStatus.Needs,
+                ["elevator"] = InspectionItemStatus.NotApplicable, ["bathroom"] = InspectionItemStatus.Needs,
+                ["common"] = InspectionItemStatus.Needs, ["circulation"] = InspectionItemStatus.Needs
+            },
+            "h8" => new() { ["elevator"] = InspectionItemStatus.Pass },
             _ => new() { ["elevator"] = InspectionItemStatus.Pass }
         };
 
@@ -261,9 +315,9 @@ public static class DemoDataSeeder
 
         var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<AppUser>();
         var student = new AppUser { Name = "Demo Student", Email = "student@demo.com", Role = UserRole.Student };
-        student.PasswordHash = hasher.HashPassword(student, "Demo123!");
+        student.PasswordHash = hasher.HashPassword(student, "Demo123");
         var municipality = new AppUser { Name = "Demo Municipality Officer", Email = "municipality@demo.com", Role = UserRole.Municipality };
-        municipality.PasswordHash = hasher.HashPassword(municipality, "Demo123!");
+        municipality.PasswordHash = hasher.HashPassword(municipality, "Demo123");
         db.Users.AddRange(student, municipality);
         await db.SaveChangesAsync();
     }

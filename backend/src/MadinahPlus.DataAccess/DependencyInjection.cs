@@ -13,8 +13,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDataAccess(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("PostgreSQL")
-            ?? throw new InvalidOperationException("Connection string 'PostgreSQL' is missing.");
+        var connectionString = ResolveConnectionString(configuration)
+            ?? throw new InvalidOperationException("Connection string 'PostgreSQL' (or DATABASE_URL) is missing.");
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
@@ -41,5 +41,45 @@ public static class DependencyInjection
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
         await DemoDataSeeder.SeedAsync(db);
+    }
+
+    /// <summary>
+    /// Prefer DATABASE_URL when set (Railway/Neon/Render); else ConnectionStrings:PostgreSQL.
+    /// </summary>
+    public static string? ResolveConnectionString(IConfiguration configuration)
+    {
+        var databaseUrl = configuration["DATABASE_URL"]
+            ?? Environment.GetEnvironmentVariable("DATABASE_URL");
+        if (!string.IsNullOrWhiteSpace(databaseUrl))
+            return ConvertDatabaseUrl(databaseUrl);
+
+        var configured = configuration.GetConnectionString("PostgreSQL");
+        return string.IsNullOrWhiteSpace(configured) ? null : configured;
+    }
+
+    internal static string ConvertDatabaseUrl(string databaseUrl)
+    {
+        if (!databaseUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase)
+            && !databaseUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+            return databaseUrl;
+
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':', 2);
+        var username = Uri.UnescapeDataString(userInfo[0]);
+        var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty;
+        var database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/'));
+        var port = uri.IsDefaultPort ? 5432 : uri.Port;
+        var isPrivate = uri.Host.Contains("railway.internal", StringComparison.OrdinalIgnoreCase)
+            || uri.Host is "localhost" or "127.0.0.1";
+        var sslMode = isPrivate ? "Disable" : "Require";
+
+        return string.Join(';',
+            $"Host={uri.Host}",
+            $"Port={port}",
+            $"Database={database}",
+            $"Username={username}",
+            $"Password={password}",
+            $"SSL Mode={sslMode}",
+            "Trust Server Certificate=true");
     }
 }

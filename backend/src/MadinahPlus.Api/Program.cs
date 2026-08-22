@@ -11,6 +11,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Railway / Render / Fly set PORT; bind all interfaces for public hosting.
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 builder.Services.AddDataAccess(builder.Configuration);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddControllers().AddJsonOptions(options =>

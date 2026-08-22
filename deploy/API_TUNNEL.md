@@ -1,21 +1,20 @@
-# Path B — API via Cloudflare quick tunnel
+# Legacy — local API tunnel (optional)
 
-## Running pieces
-- Postgres: localhost:5432
-- API: http://127.0.0.1:5088
-- Tunnel service: `systemctl --user status cloudflared-api-quick`
-- Current API public URL: https://finish-grown-characters-concept.trycloudflare.com
+Production no longer needs this. API + Postgres run on Railway:
+
+- API: https://api-production-8d38.up.railway.app
 - Frontend: https://madina-plus.ramighassan-d.workers.dev
 
-## Keep PC awake
-API + DB + cloudflared must stay running.
+Use this file only if you temporarily expose a **local** API again.
 
-## If tunnel URL changes
-1. `journalctl --user -u cloudflared-api-quick -n 50 --no-pager | grep trycloudflare`
-2. Update `VITE_API_URL` inside root `package.json` script `build:cf`
-3. Commit + push to GitHub (redeploys Workers)
+## Old Path B pieces
 
-## Restart helpers
+- Postgres: localhost:5432
+- API: http://127.0.0.1:5088
+- Tunnel: `systemctl --user status cloudflared-api-quick`
+
+## Restart helpers (local only)
+
 ```bash
 systemctl --user restart cloudflared-api-quick
 cd backend/src/MadinahPlus.Api && ASPNETCORE_URLS=http://127.0.0.1:5088 dotnet run
