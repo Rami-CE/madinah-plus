@@ -1,4 +1,4 @@
-name = "madinah-plus"
+name = "madina-plus"
 compatibility_date = "2025-08-01"
 
 # Static Vite SPA on Cloudflare Workers/Pages assets
