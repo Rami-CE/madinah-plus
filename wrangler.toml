@@ -2,8 +2,9 @@ name = "madina-plus"
 compatibility_date = "2025-08-01"
 
 # Run Vite build before upload (Cloudflare Build command is None)
+# Uses build:cf so VITE_API_URL points at the local API quick tunnel
 [build]
-command = "npm run build"
+command = "npm run build:cf"
 
 [assets]
 directory = "./dist"

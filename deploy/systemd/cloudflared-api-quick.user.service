@@ -1,0 +1,14 @@
+[Unit]
+Description=Cloudflare quick tunnel for MadinahPlus API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=TUNNEL_ORIGIN_CERT=
+ExecStart=/usr/local/bin/cloudflared tunnel --no-autoupdate --protocol http2 --url http://127.0.0.1:5088
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
