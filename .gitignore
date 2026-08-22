@@ -1,0 +1,33 @@
+# Node / Vite
+node_modules/
+dist/
+frontend/dist/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local env
+appsettings.*.local.json
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Cloudflare / tunnel local secrets
+**/*.pem
+**/*credentials*.json
+.cloudflared/

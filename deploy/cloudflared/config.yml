@@ -1,0 +1,12 @@
+# Template — fill after: cloudflared tunnel create + route dns
+tunnel: TUNNEL_UUID
+credentials-file: /home/USER/.cloudflared/TUNNEL_UUID.json
+
+ingress:
+  - hostname: HOSTNAME
+    service: http://localhost:80
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      keepAliveConnections: 32
+  - service: http_status:404

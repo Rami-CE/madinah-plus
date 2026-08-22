@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: madinahplus-db
+    environment:
+      POSTGRES_DB: madinahplus
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: abc@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - madinahplus_pg:/var/lib/postgresql/data
+
+volumes:
+  madinahplus_pg:

@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', sans-serif;
+}
+
+.font-mono-data {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+[dir='rtl'] .mirror-rtl {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Theme transition */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, box-shadow 0.3s ease !important;
+}
+
+/* Focus visibility */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #6366F1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.dark a:focus-visible,
+.dark button:focus-visible,
+.dark [tabindex]:focus-visible {
+  outline-color: #818CF8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Certification seal */
+.seal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+.dark .seal {
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+.seal::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 9999px;
+  border: 1px dashed currentColor;
+  opacity: 0.5;
+}
+.seal-ink { color: #059669; }
+.seal-ink-amber { color: #D97706; }
+.seal-ink-red { color: #DC2626; }
+
+/* Leaflet overrides */
+.leaflet-container {
+  font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+  border-radius: 0.75rem;
+  z-index: 0;
+}
+.dark .leaflet-container {
+  background: #1e293b;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+}
+.dark .leaflet-popup-content-wrapper {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+.dark .leaflet-popup-tip {
+  background: #1e293b;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+/* Page enter animation helper */
+.page-enter {
+  animation: riseIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
+
+.city-grid {
+  background-image:
+    repeating-linear-gradient(115deg, transparent, transparent 26px, rgba(31, 111, 106, 0.16) 26px, rgba(31, 111, 106, 0.16) 27px),
+    repeating-linear-gradient(8deg, transparent, transparent 34px, rgba(196, 163, 90, 0.12) 34px, rgba(196, 163, 90, 0.12) 35px);
+}
+
+html[data-text-size='large'] { font-size: 112%; }
+html[data-text-size='xlarge'] { font-size: 128%; }
+
+html.high-contrast {
+  --tw-border-opacity: 1;
+}
+html.high-contrast body {
+  font-weight: 600;
+}
+html.high-contrast button,
+html.high-contrast input,
+html.high-contrast textarea,
+html.high-contrast .rounded-xl,
+html.high-contrast .rounded-lg {
+  border-width: 2px;
+}
+
+html.reduce-motion,
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
