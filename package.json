@@ -1,0 +1,13 @@
+{
+  "name": "madinah-plus",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w madinah-plus-web",
+    "build": "npm run build -w madinah-plus-web && rm -rf dist && cp -r frontend/dist dist",
+    "preview": "npm run preview -w madinah-plus-web"
+  }
+}
