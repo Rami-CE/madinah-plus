@@ -1,5 +1,7 @@
 # Madinah+ / مدينة+
 
+> **This project was done relying entirely on AI (Cursor AI).** All implementation, code, and documentation were produced with Cursor AI.
+
 Vite + React web client and ASP.NET Core API for a student-friendly city certification prototype.
 
 Demo data is fictional.
